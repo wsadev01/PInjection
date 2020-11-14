@@ -291,6 +291,7 @@ Return
 ------
 Tuple
     Retorna True y los bytes recibidos respectivamente.
+        raise NotImplementedError
         '''
         raise NotImplementedError
         
