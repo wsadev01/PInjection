@@ -63,6 +63,7 @@ WinError = ctypes.WinError
 CreateToolhelp32Snapshot = KERNEL32.CreateToolhelp32Snapshot
 GetLastError = KERNEL32.GetLastError
 GetModuleHandle = KERNEL32.GetModuleHandleW
+OpenProcess = KERNEL32.OpenProcess
 Process32First = KERNEL32.Process32First
 Process32Next = KERNEL32.Process32Next
 QueryFullProcessImageNameW = KERNEL32.QueryFullProcessImageNameW
