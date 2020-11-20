@@ -25,7 +25,7 @@ Como ya dije, esto no es un script para ejecutar y automáticamente vas a destru
  - Agregado los parametros
    - _--baseaddr DIRECCION_ (Utilizado para especificar la región base para la región de memoria que se tratará de acceder).
    - _--buffsize TAMAÑO_ (Utilizado para especificar el tamaño del buffer para que PInjection guarde el contenido leído en el mismo).
-   - _--read (Commando para leer una region de memoria ya alojada, este parametro necesita de **baseaddr** y **buffsize**).
+   - _--read_ (Commando para leer una region de memoria ya alojada, este parametro necesita de **baseaddr** y **buffsize**).
    - _--verbose_ y _--debug_ (Para necesidades de especificidad en el stdout y para motivos de debug respectivamente).
  - Actualmente solo puede alojar memoria e imprimir (o asignar a una variable) la dirección base de memoria alojada, **NO ES RECOMENDABLE** ejecutar este script muchas veces, ya que este script genera [memory leaks](https://en.wikipedia.org/wiki/Memory_leak).
 
