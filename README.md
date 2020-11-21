@@ -20,10 +20,10 @@ PInjection es un script de Python que puede funcionar como Módulo o como script
 -----------------
 Como ya dije, esto no es un script para ejecutar y automáticamente vas a destruír permanentemente la computadora destino, sino un script/módulo para cargar código objeto en la memoria de un proceso, esto quiere decir explicitamente lo dícho, para ejecutar el código objeto que se guarda, se tiene que conocer qué es, ya que luego se tendrá que pasar a FunctionType utilizando la librería [types](https://docs.python.org/3/library/types.html), y ahí se tendrán que definír todas las constantes utilizadas en el código objeto. **_La carga del código objeto es automática, la ejecución NO_**.  
 &emsp;&emsp;Tambien hay muchos procesos en los cuales une no podrá inyectar, ya que estos procesos tienen y/o presentan condiciones especificas internas que no permiten acceder a sus regiones de memoria.
-#### Notas 0.4
+#### Notas 0.5
 
  - Agregado los parametros
-   - _--deallocate_ (Para poder eliminar la memoria reservada).
+   - _--execute_ (Lee, des-marshaliza código y ejecuta, **solo funciona con testmodule.test_function y con debug activado**)
  - Si no se utiliza correcatemente el parametro para desalojar memoria en el proceso específico, se corre un riesgo de generar un [memory leaks](https://en.wikipedia.org/wiki/Memory_leak).
 
 #### DISCLAIMER Y AVISOS LEGALES.
