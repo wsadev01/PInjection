@@ -244,7 +244,7 @@ None.
         self.mobj = obj
         self.mobj_size = buffsize
         # * PID for the process handle
-        self.pid = pid
+        self.pid = int(pid, 16)
         
         # * Arguments parser passing to class attribute.
         self.verbose = verbose
@@ -511,7 +511,7 @@ None.
             if self.verbose:
                 print("Assignment of the crafted function ... ")
             function = FunctionType(content, self.constants)
-            if function and self.verbose:
+            if self.verbose:
                 # * THIS OK IS FROM THE UPPER VERBOSITY ROUTINE.
                 print("OK\n")
         except Exception as err:
