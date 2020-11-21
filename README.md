@@ -11,7 +11,7 @@ PInjection es un script de Python que puede funcionar como Módulo o como script
  
 ### ¡Que SÍ es!
 -----------------
- - PInjection **SI** es un script ejecutable para meter Código Objeto "marshalizado" específico en una región de memoria específica.
+ - PInjection **SI** es un script ejecutable para meter Código Objeto específico y "marshalizado" en una región de memoria específica.
  - PInjection **SI** es un módulo que provee una interfaz sencilla de utilizar para cualquier novato en Python.
  - PInjection **SI** es una buena elección para ofuscar y ocultar código objeto en un proceso (Similar a [DLL Injection](https://en.wikipedia.org/wiki/DLL_injection))
  - PInjection **SI** es un software libre y gratuito. *(GNU GPLv3)*
