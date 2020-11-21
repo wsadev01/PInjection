@@ -49,6 +49,7 @@ import dis
 import inspect
 import importlib
 import marshal
+from pathlib import Path
 import os
 import sys
 
@@ -159,6 +160,16 @@ MEM_RELEASE = 0x00008000
 
 # END .declarations
 
+# Thanks to normanius (https://stackoverflow.com/users/3388962/normanius)
+# Stackoverflow answer https://stackoverflow.com/questions/404744/determining-application-path-in-a-python-exe-generated-by-pyinstaller
+if getattr(sys, 'frozen', False):
+    # If the application is run as a bundle, the PyInstaller bootloader
+    # extends the sys module by a flag frozen=True and sets the app 
+    # path into variable _MEIPASS'.
+    application_path = sys._MEIPASS
+else:
+    application_path = os.path.dirname(os.path.abspath(__file__))
+
 class Inject:
     '''
 Description
@@ -244,7 +255,7 @@ None.
         self.mobj = obj
         self.mobj_size = buffsize
         # * PID for the process handle
-        self.pid = int(pid, 16)
+        self.pid = pid
         
         # * Arguments parser passing to class attribute.
         self.verbose = verbose
@@ -662,13 +673,14 @@ if __name__ == '__main__':
     else:
         module_function = args.function.split('___')
         module = module_function[0]
+        sys.path.append(os.getcwd())
         module = importlib.import_module(module)
         func = module_function[1]
         func = getattr(module, func)
     if args.constants == None:
         constants = ''
     else:
-        constantFile = importlib.import_module(args.constants)
+        constantFile = importlib.import_module(os.path.abspath(args.constants))
         constants = constantFile.get_constants()
         if args.verbose:
             print(f"Constants\n{constants}\n")
