@@ -172,7 +172,9 @@ Description
     * Base address of the memory region.
     * A handle to the process with the given PID.
     '''
-    def __init__(self, pid, base_address = 0, buffsize = 0, filename = '', function = None, obj = None, cle = False):
+    def __init__(self, pid, base_address = 0,
+        buffsize = 0, filename = '', function = None,
+        obj = None, cle = False, verbose = False, debug = False):
         '''
 Description
 -----------
@@ -197,6 +199,12 @@ function: FunctionType
     
 obj: CodeType ('code')
     The code object that will be 'marshalized'
+
+verbose: bool
+    Enables verbosity
+
+debug: bool
+    Enables debug mode
     
 cle: bool
     If you are executing this from the Command Line,
@@ -233,17 +241,23 @@ None.
         # * PID for the process handle
         self.pid = pid
         
+        # * Arguments parser passing to class attribute.
+        self.verbose = verbose
+        self.debug = debug
+        
         
         # * cle = Command Line Execution.
         if self.cle:
             if args.read:
                 status = self.read()
+            elif args.execute:
+                status = self.execute()
             elif args.deallocate:
                 status = self.deallocate()
             else:
                 status = self.inject()
                 
-            if args.verbose:
+            if self.verbose:
                 if status == None or status == True:
                     print(f"PInjection: Action completed successfully")
                 else:
@@ -264,7 +278,7 @@ None.
         # * of the marshaled object
         self.buff = bytes(self.mobj_size)
         
-        if args.verbose:
+        if self.verbose:
             print(f"Content to inject\n\n{self.mobj}\n")
             print(f"Size of content: {self.mobj_size}")
             print(f"Length of the buffer: {len(self.buff)}")
@@ -276,7 +290,7 @@ None.
             False,
             self.pid
             )
-        if args.verbose:
+        if self.verbose:
             print("VirtualAllocEx ... ", end='')
         # * Set the base address
         self.base_addr = VirtualAllocEx(
@@ -288,20 +302,20 @@ None.
             )
         
         if not self.base_addr:
-            if args.verbose:
+            if self.verbose:
                 print("NOT OK")
             else:
                 print("")
             print(WinError(GetLastError()))
             return False
 
-        if args.verbose:
+        if self.verbose:
             print("OK")
             print(f"Value returned from VirtualAllocEx {self.base_addr}")
             print(f"Size of bytes allocated {self.mobj_size}")
             print('')
         
-        if args.verbose:
+        if self.verbose:
             print(f"WriteProcessMemory base address: {self.base_addr}")
             print("WriteProcessMemory ... ", end = '')
         
@@ -315,13 +329,13 @@ None.
         
             
         if not status:
-            if args.verbose:
+            if self.verbose:
                 print("NOT OK")
             else:
                 print("")
             print(WinError(GetLastError()))
             return False
-        if args.verbose:
+        if self.verbose:
             print("OK") 
             print(f"Value returned from WriteProcessMemory {status}")
         
@@ -352,7 +366,7 @@ None.
             co.co_lnotab
             )
         
-        if args.verbose:
+        if self.verbose:
             print(f'co.co_argcount {co.co_argcount}')
             print(f'co.co_kwonlyargcount {co.co_kwonlyargcount}')
             print(f'co.co_nlocals {co.co_nlocals}')
@@ -384,13 +398,13 @@ None.
                 print("Buffer length is 0. Specify the buffer size")
                 return False
         
-        if args.verbose:
+        if self.verbose:
             print("PInjection will read the process memory")
             print("Base address: 0x%08X"%self.base_addr)
             
         # * Check for hProcess
         if not self.hProc:
-            if args.verbose:
+            if self.verbose:
                 print("OpenProcess ... ", end='')
                 
             self.hProc = OpenProcess(
@@ -399,23 +413,23 @@ None.
                 self.pid
                 )    
             if not self.hProc:
-                if args.verbose:
+                if self.verbose:
                     print("NOT OK")
                 print(WinError(GetLastError()))
                 print("")
                 return False
         else:
-            if args.verbose:
+            if self.verbose:
                 print("OpenProcess ... ", end='')
             status = CloseHandle(self.hProc)
             if not status:
-                if args.verbose:
+                if self.verbose:
                     print("NOT OK")
                 print(WinError(GetLastError()))
                 print("")
                 return False
                 
-            if args.verbose:
+            if self.verbose:
                 print("OpenProcess ... ", end='')
             self.hProc = OpenProcess(
                 PROCESS_VM_READ,
@@ -423,13 +437,13 @@ None.
                 self.pid
                 )    
             if not self.hProc:
-                if args.verbose:
+                if self.verbose:
                     print("NOT OK")
                 print(WinError(GetLastError()))
                 print("")
                 return False
              
-        if args.verbose:
+        if self.verbose:
             print("OK")
             print("")
             print("ReadProcessMemory ... ", end='')
@@ -442,23 +456,78 @@ None.
             0
             )
         if not status:
-            if args.verbose:
+            if self.verbose:
                 print("NOT OK")
             print(WinError(GetLastError()))
             print('')
             return False
             
         print("Content retrieved successfully")
-        if args.verbose:
+        if self.verbose:
             print("OK")
             print(f"Content in buffer\n\n{self.buff}\n")
-
+        return True
+        
+    def execute(self):
+        '''Execute from the buffer.'''
+        status = self.read()
+        if not status:
+            print('Failed to retrieve memory to the buffer.')
+            print(f'Process PID - {self.pid}')
+            print('')
+            return False
+            
+        # * Check if content is valid marshal or not.
+        try:
+            content = marshal.loads(self.buff)
+        except TypeError as type_err:
+            print("TypeError raised, unable to de-marshalize")
+            if self.verbose:
+                print("Error message")
+                print(str(type_err))
+            print("")
+            return False
+        except ValueError as value_err:
+            print("ValueError raised, unable to de-marshalize")
+            if self.verbose:
+                print("Error message")
+                print(str(value_err))
+            print("")
+            return False
+        except EOFError as eof_err:
+            print("EOFError raised, unable to de-marshalize")
+            if self.verbose:
+                print("Error message")
+                print(str(eof_err))
+            print("")
+            return False
+        
+        if self.debug:
+            constants = {
+                'USER32': ctypes.windll.user32,  #Globals
+                'MessageBoxW': ctypes.windll.user32.MessageBoxW,
+                'MB_OK': 0x0}
+            
+            if self.debug:
+                print("Assignment of crafted_function: ... ", end ="")
+                
+            function = FunctionType(content, constants)
+            if self.debug:
+                # * THIS OK IS FROM THE UPPER VERBOSITY ROUTINE.
+                print("OK\n")
+                
+            function()
+            
+            return True
+        else:
+            raise NotImplementedError
+    
     def deallocate(self):
         '''Use VirtualFree to deallocate the given memory region.'''
         
         # * Check for hProcess
         if not self.hProc:
-            if args.verbose:
+            if self.verbose:
                 print("OpenProcess ... ", end='')
                 
             self.hProc = OpenProcess(
@@ -467,23 +536,23 @@ None.
                 self.pid
                 )    
             if not self.hProc:
-                if args.verbose:
+                if self.verbose:
                     print("NOT OK")
                 print(WinError(GetLastError()))
                 print("")
                 return False
         else:
-            if args.verbose:
+            if self.verbose:
                 print("OpenProcess ... ", end='')
             status = CloseHandle(self.hProc)
             if not status:
-                if args.verbose:
+                if self.verbose:
                     print("NOT OK")
                 print(WinError(GetLastError()))
                 print("")
                 return False
                 
-            if args.verbose:
+            if self.verbose:
                 print("OpenProcess ... ", end='')
             self.hProc = OpenProcess(
                 PROCESS_VM_OPERATION,
@@ -491,13 +560,13 @@ None.
                 self.pid
                 )    
             if not self.hProc:
-                if args.verbose:
+                if self.verbose:
                     print("NOT OK")
                 print(WinError(GetLastError()))
                 print("")
                 return False
         
-        if args.verbose:
+        if self.verbose:
             # * This ok is from the verbosity of the upper routine.
             print("OK\n")
             print(
@@ -518,7 +587,7 @@ None.
             print(WinError(GetLastError()))
             return False
         else:
-            if args.verbose:
+            if self.verbose:
                 print("OK")
         
         print(
@@ -554,7 +623,12 @@ if __name__ == '__main__':
     parser.add_argument(
         '--read', action = 'store_true',
         help = 'Read the process memory (requires a base address)')
-        
+    parser.add_argument(
+        '--execute', action = 'store_true',
+        help = 'Try to execute marshalized Code object from the memory '
+               '(Only works for test_function from testmodule.py,'
+               ' enable debugmode to use this beta feature)')
+    
     parser.add_argument(
         '--deallocate', action = 'store_true',
         help = 'Deallocate the memory regions with a given base address'
@@ -589,6 +663,8 @@ if __name__ == '__main__':
             buffsize = args.buffsize,
             function = func,
             filename = args.filename,
+            verbose = args.verbose,
+            debug = args.debug,
             cle = True
             )
     except ImportError as err:
