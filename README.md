@@ -37,4 +37,4 @@ Comando: `python pinjection.py 5600 --constants constantsfile --baseaddr 1454899
 
 #### DISCLAIMER Y AVISOS LEGALES.
  - Todos los contenidos multimedia estan licenciados bajo la licencia [Creative Commons BY-SA](https://creativecommons.org/licenses/by-sa/3.0/deed.es)
- - Todos mal uso que se le de a este software, queda estricta y absolutamente absuelto de *mea culpa* y/o responsabilidad sobre los daños y perjuicios generados a través del uso de este software, al utilizar este software estas accediendo a tomar cualquier tipo de responsabilidad sobre lo que el software pueda generar al ser utilizado.
+ - Este software fué diseñado con fínes educativos. El autor renuncia a toda responsabilidad por el uso que se haga del mismo
