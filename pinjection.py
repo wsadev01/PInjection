@@ -96,13 +96,14 @@ VirtualAllocEx.argtypes = [
     ]
 VirtualAllocEx.restype = wintypes.DWORD
 
-VirtualFree = KERNEL32.VirtualFree
-VirtualFree.argtypes = [
+VirtualFreeEx = KERNEL32.VirtualFreeEx
+VirtualFreeEx.argtypes = [
+    wintypes.HANDLE,  #hProcess
     wintypes.LPVOID, #lpAddress
     ctypes.c_size_t, #dwSize
     wintypes.DWORD   #dwFreeType
     ]
-VirtualFree.restype = wintypes.BOOL
+VirtualFreeEx.restype = wintypes.BOOL
 
 WriteProcessMemory = KERNEL32.WriteProcessMemory
 WriteProcessMemory.argtypes = [
@@ -211,6 +212,7 @@ None.
         self.base_addr = base_address
         # * Buffer to work with.
         self.buff = bytes(buffsize)
+        self.buffsize = buffsize
         # * Command Line Execution
         self.cle = cle
         # * Number of bytes allocated.
@@ -236,6 +238,8 @@ None.
         if self.cle:
             if args.read:
                 status = self.read()
+            elif args.deallocate:
+                status = self.deallocate()
             else:
                 status = self.inject()
                 
@@ -369,7 +373,7 @@ None.
     
     def read(self):
         '''Read the memory region from a process.'''
-        if len(self.buff) == 0:
+        if self.buffsize == 0:
             if self.cle:
                 print(
                     "Buffer length is 0. Specify the buffer size with the "
@@ -384,6 +388,7 @@ None.
             print("PInjection will read the process memory")
             print("Base address: 0x%08X"%self.base_addr)
             
+        # * Check for hProcess
         if not self.hProc:
             if args.verbose:
                 print("OpenProcess ... ", end='')
@@ -423,7 +428,6 @@ None.
                 print(WinError(GetLastError()))
                 print("")
                 return False
-        
              
         if args.verbose:
             print("OK")
@@ -434,7 +438,7 @@ None.
             self.hProc,
             self.base_addr,
             self.buff,
-            self.mobj_size,
+            self.buffsize,
             0
             )
         if not status:
@@ -442,11 +446,87 @@ None.
                 print("NOT OK")
             print(WinError(GetLastError()))
             print('')
+            return False
+            
         print("Content retrieved successfully")
         if args.verbose:
             print("OK")
             print(f"Content in buffer\n\n{self.buff}\n")
+
+    def deallocate(self):
+        '''Use VirtualFree to deallocate the given memory region.'''
+        
+        # * Check for hProcess
+        if not self.hProc:
+            if args.verbose:
+                print("OpenProcess ... ", end='')
                 
+            self.hProc = OpenProcess(
+                PROCESS_VM_OPERATION,
+                0,
+                self.pid
+                )    
+            if not self.hProc:
+                if args.verbose:
+                    print("NOT OK")
+                print(WinError(GetLastError()))
+                print("")
+                return False
+        else:
+            if args.verbose:
+                print("OpenProcess ... ", end='')
+            status = CloseHandle(self.hProc)
+            if not status:
+                if args.verbose:
+                    print("NOT OK")
+                print(WinError(GetLastError()))
+                print("")
+                return False
+                
+            if args.verbose:
+                print("OpenProcess ... ", end='')
+            self.hProc = OpenProcess(
+                PROCESS_VM_OPERATION,
+                0,
+                self.pid
+                )    
+            if not self.hProc:
+                if args.verbose:
+                    print("NOT OK")
+                print(WinError(GetLastError()))
+                print("")
+                return False
+        
+        if args.verbose:
+            # * This ok is from the verbosity of the upper routine.
+            print("OK\n")
+            print(
+                "PInjection will deallocate memory "
+                f"from the process {self.pid}"
+                )
+            print("Base address: 0x%08X"%self.base_addr)
+            print("VirtualFreeEx ... ", end='')
+        
+        status = VirtualFreeEx(
+            self.hProc,
+            self.base_addr, #lpAddress
+            0,
+            MEM_RELEASE
+            )
+        if not status:
+            print("NOT OK")
+            print(WinError(GetLastError()))
+            return False
+        else:
+            if args.verbose:
+                print("OK")
+        
+        print(
+            "PInjector succesfully deallocated the memory region, ",
+            end = '')
+        print("base address 0x%08X"%self.base_addr)   
+    
+
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(
@@ -474,6 +554,11 @@ if __name__ == '__main__':
     parser.add_argument(
         '--read', action = 'store_true',
         help = 'Read the process memory (requires a base address)')
+        
+    parser.add_argument(
+        '--deallocate', action = 'store_true',
+        help = 'Deallocate the memory regions with a given base address'
+               ' (Requires --baseaddr)')
     
     parser.add_argument(
         '--filename', metavar='Filename', default='',
