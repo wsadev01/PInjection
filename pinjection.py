@@ -173,7 +173,7 @@ Description
     * A handle to the process with the given PID.
     '''
     def __init__(self, pid, base_address = 0,
-        buffsize = 0, filename = '', function = None,
+        buffsize = 0, constants = {}, filename = '', function = None,
         obj = None, cle = False, verbose = False, debug = False):
         '''
 Description
@@ -190,7 +190,10 @@ pid: int
 
 base_address: int
     Base address of the allocated memory region (optional)
-    
+ 
+constants: dictionary
+    A dictionary containing the constants for the function
+ 
 filename: string
     The filename of the given function (optional)
     
@@ -199,12 +202,6 @@ function: FunctionType
     
 obj: CodeType ('code')
     The code object that will be 'marshalized'
-
-verbose: bool
-    Enables verbosity
-
-debug: bool
-    Enables debug mode
     
 cle: bool
     If you are executing this from the Command Line,
@@ -212,6 +209,12 @@ cle: bool
     if you import this, you can use this file as a
     module.
 
+verbose: bool
+    Enables verbosity
+
+debug: bool
+    Enables debug mode
+    
 Returns
 -------
 None.
@@ -221,6 +224,8 @@ None.
         # * Buffer to work with.
         self.buff = bytes(buffsize)
         self.buffsize = buffsize
+        # * Constants for the function to execute.
+        self.constants = constants
         # * Command Line Execution
         self.cle = cle
         # * Number of bytes allocated.
@@ -502,25 +507,25 @@ None.
             print("")
             return False
         
-        if self.debug:
-            constants = {
-                'USER32': ctypes.windll.user32,  #Globals
-                'MessageBoxW': ctypes.windll.user32.MessageBoxW,
-                'MB_OK': 0x0}
-            
-            if self.debug:
-                print("Assignment of crafted_function: ... ", end ="")
-                
-            function = FunctionType(content, constants)
-            if self.debug:
+        try:
+            if self.verbose:
+                print("Assignment of the crafted function ... ")
+            function = FunctionType(content, self.constants)
+            if function and self.verbose:
                 # * THIS OK IS FROM THE UPPER VERBOSITY ROUTINE.
                 print("OK\n")
+        except Exception as err:
+            print("An error occurred in the function assignment\n")
+            if self.verbose:
+                print("Error message: ")
+                print(f"\t{str(err)}\n")
                 
-            function()
-            
-            return True
-        else:
-            raise NotImplementedError
+        if self.verbose and not function:
+            print("NOT OK\n")
+            return False
+        function()
+        
+        return True
     
     def deallocate(self):
         '''Use VirtualFree to deallocate the given memory region.'''
@@ -611,6 +616,11 @@ if __name__ == '__main__':
         help = 'The module/function imported from a module separated by 3 underlines e.g '
         'myModuleWithoutDotPy___myfunction'
         )
+        
+    parser.add_argument(
+        '--constants', metavar='File',
+        help='A file containing a function called get_constants.'
+            ' This function should return a constants dictionary')
     parser.add_argument(
         '--baseaddr', metavar='IntNumber', type = int,
         help = 'Base address of the region to read/deallocate'
@@ -655,12 +665,21 @@ if __name__ == '__main__':
         module = importlib.import_module(module)
         func = module_function[1]
         func = getattr(module, func)
-        
+    if args.constants == None:
+        constants = ''
+    else:
+        constantFile = importlib.import_module(args.constants)
+        constants = constantFile.get_constants()
+        if args.verbose:
+            print(f"Constants\n{constants}\n")
+            os.system("PAUSE")
+    
     try:
         injection = Inject(
             args.pid[0], #pid
             base_address = args.baseaddr,
             buffsize = args.buffsize,
+            constants = constants,
             function = func,
             filename = args.filename,
             verbose = args.verbose,
