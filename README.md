@@ -20,14 +20,11 @@ PInjection es un script de Python que puede funcionar como Módulo o como script
 -----------------
 Como ya dije, esto no es un script para ejecutar y automáticamente vas a destruír permanentemente la computadora destino, sino un script/módulo para cargar código objeto en la memoria de un proceso, esto quiere decir explicitamente lo dícho, para ejecutar el código objeto que se guarda, se tiene que conocer qué es, ya que luego se tendrá que pasar a FunctionType utilizando la librería [types](https://docs.python.org/3/library/types.html), y ahí se tendrán que definír todas las constantes utilizadas en el código objeto. **_La carga del código objeto es automática, la ejecución NO_**.  
 &emsp;&emsp;Tambien hay muchos procesos en los cuales une no podrá inyectar, ya que estos procesos tienen y/o presentan condiciones especificas internas que no permiten acceder a sus regiones de memoria.
-#### Notas 0.3
+#### Notas 0.4
 
  - Agregado los parametros
-   - _--baseaddr DIRECCION_ (Utilizado para especificar la región base para la región de memoria que se tratará de acceder).
-   - _--buffsize TAMAÑO_ (Utilizado para especificar el tamaño del buffer para que PInjection guarde el contenido leído en el mismo).
-   - _--read_ (Commando para leer una region de memoria ya alojada, este parametro necesita de **baseaddr** y **buffsize**).
-   - _--verbose_ y _--debug_ (Para necesidades de especificidad en el stdout y para motivos de debug respectivamente).
- - Actualmente solo puede alojar memoria e imprimir (o asignar a una variable) la dirección base de memoria alojada, **NO ES RECOMENDABLE** ejecutar este script muchas veces, ya que este script genera [memory leaks](https://en.wikipedia.org/wiki/Memory_leak).
+   - _--deallocate_ (Para poder eliminar la memoria reservada).
+ - Si no se utiliza correcatemente el parametro para desalojar memoria en el proceso específico, se corre un riesgo de generar un [memory leaks](https://en.wikipedia.org/wiki/Memory_leak).
 
 #### DISCLAIMER Y AVISOS LEGALES.
  - Todos los contenidos multimedia estan licenciados bajo la licencia [Creative Commons BY-SA](https://creativecommons.org/licenses/by-sa/3.0/deed.es)
