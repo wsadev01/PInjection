@@ -1,3 +1,6 @@
+# <h1 align=center><img src=https://raw.githubusercontent.com/systemnaut/Pinjection/master/isologotipo/pinjector-iso-1-alpha.png width=50> PInjector</h1>
+![PInjector isologotype](isologotipo/pinjector-isologo-1.png)
+# [Readme-ES](README.md) - [Readme-EN](README-EN.md)
 ## What is it?
 
 PInjection is a Python script that can be used as a Module or as an executable script from the command line (CLI script). What this script does is inject Object Code into a specific memory region of a process using the Windows API ([OpenProcess](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess), [VirtuallAllocEx](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualallocex), [WriteProcessMemory](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-writeprocessmemory) and [ReadProcessMemory](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory).
