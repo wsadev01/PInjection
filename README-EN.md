@@ -31,7 +31,7 @@ Injecting the test_function function from the testmodule file into the explorer.
 Command:  `python pinjection.py 5600 --function testmodule___test_function --verbose Injecting bytecode into explorer.exe`
 ![Executing the testmodule](exampligratia/injecting_testmodule.png)
 
-Ejecutando la función una vez inyectada (Se encuentra en la región de memoria cuya dirección base es 14548992)
+Executing the function once inyected (It is in the memory, at the base address 14548992)
 Command: `python pinjection.py 5600 --constants constantsfile --baseaddr 14548992 --buffsize 164 --execute --verbose Executing bytecode from explorer.exe memory`  
 ![Executing the testmodule](exampligratia/executing_testmodule.png)
 ### 0.7 notes
