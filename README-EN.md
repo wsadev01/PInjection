@@ -32,12 +32,9 @@ Ejecutando la función una vez inyectada (Se encuentra en la región de memoria 
 Command: `python pinjection.py 5600 --constants constantsfile --baseaddr 14548992 --buffsize 164 --execute --verbose Executing bytecode from explorer.exe memory`  
 ![Executing the testmodule](exampligratia/executing_testmodule.png)
 ### 0.6.3 notes
+ - First binary release, this one should be used in a CLI environment, and the python file as a package or module.
 
- - Added English readme
- - Adding an example of using this software as a library (exshell.py), anyone with basic-intermediate knowledge of python will be able to read and understand the code that is inside it and then replicate it.
- - If memory is not deallocated in the specific process, a [memory leak](https://en.wikipedia.org/wiki/Memory_leak) will be generated.
-
-#### DISCLAIMER AND LEGAL NOTICES.
-
+#### DISCLAIMER, NOTICES AND LEGAL NOTICES.
+  - If memory is not deallocated in the specific process, a [memory leak](https://en.wikipedia.org/wiki/Memory_leak) will be generated.
   - All multimedia contents are licensed under the Creative Commons BY-SA license.
   - This software was designed for educational purposes. The author disclaims all responsibility for the use made of it.
