@@ -30,12 +30,10 @@ Ejecutando la función una vez inyectada (Se encuentra en la región de memoria 
 Comando: `python pinjection.py 5600 --constants constantsfile --baseaddr 14548992 --buffsize 164 --execute --verbose`
 ![Executing bytecode from explorer.exe memory](exampligratia/executing_testmodule.png)
 
-#### Notas 0.6.3
- - Agregado un readme en inglés
- - Agregado un ejemplo de utilización de este software como libreria (exshell.py), cualquiera con conocimientos básicos-intermedios en python podrá ser capaz de leer y comprender tranquilamente el código que hay allí dentro para luego replicarlo.
+#### Notas 0.7
+ - Primer release con archivo binario, este debería utilizarse como script CLI, y el archivo python como paquete o módulo.
+
+#### DISCLAIMER, AVISOS y AVISOS LEGALES.
  - Si no se desaloja la memoria en el proceso específico, se generará una [fuga de memoria](https://en.wikipedia.org/wiki/Memory_leak).
-
-
-#### DISCLAIMER Y AVISOS LEGALES.
  - Todos los contenidos multimedia estan licenciados bajo la licencia [Creative Commons BY-SA](https://creativecommons.org/licenses/by-sa/3.0/deed.es)
  - Este software fué diseñado con fínes educativos. El autor renuncia a toda responsabilidad por el uso que se haga del mismo
