@@ -23,7 +23,7 @@ As I said, this is not a script to execute and you will automatically destroy th
 but a script / module to load object code in the memory of a process, this means explicitly what I say. To execute the object code that is saved,
 you have to know what it is, since then you will have to pass a FunctionType using the library types, and there you will have to define all the constants used
 in the object code. The loading of the object code is automatic, the execution **is NOT**. There are also many processes in which you will not be able to inject,
-since these processes have and / or present specific internal conditions that do not allow access to their memory regions.
+since these processes have and / or present specific internal conditions that do not allow access to their memory regions
 
 ### Examples.
 ***
