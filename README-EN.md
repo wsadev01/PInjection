@@ -31,8 +31,9 @@ Command:  `python pinjection.py 5600 --function testmodule___test_function --ver
 Ejecutando la función una vez inyectada (Se encuentra en la región de memoria cuya dirección base es 14548992)
 Command: `python pinjection.py 5600 --constants constantsfile --baseaddr 14548992 --buffsize 164 --execute --verbose Executing bytecode from explorer.exe memory`  
 ![Executing the testmodule](exampligratia/executing_testmodule.png)
-### 0.6.2 notes
+### 0.6.3 notes
 
+ - Added English readme
  - Adding an example of using this software as a library (exshell.py), anyone with basic-intermediate knowledge of python will be able to read and understand the code that is inside it and then replicate it.
  - If memory is not deallocated in the specific process, a [memory leak](https://en.wikipedia.org/wiki/Memory_leak) will be generated.
 
