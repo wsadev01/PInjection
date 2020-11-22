@@ -31,7 +31,7 @@ Command:  `python pinjection.py 5600 --function testmodule___test_function --ver
 Ejecutando la función una vez inyectada (Se encuentra en la región de memoria cuya dirección base es 14548992)
 Command: `python pinjection.py 5600 --constants constantsfile --baseaddr 14548992 --buffsize 164 --execute --verbose Executing bytecode from explorer.exe memory`  
 ![Executing the testmodule](exampligratia/executing_testmodule.png)
-### 0.6.3 notes
+### 0.7 notes
  - First binary release, this one should be used in a CLI environment, and the python file as a package or module.
 
 #### DISCLAIMER, NOTICES AND LEGAL NOTICES.
