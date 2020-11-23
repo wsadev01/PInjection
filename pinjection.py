@@ -15,7 +15,7 @@
 
 __AUTHOR__ = 'torswq(systemnaut) <torsw@protonmail.com>'
 __LICENSE__ = 'GNU GPLv3'
-__VERSION__ = '0.2'
+__VERSION__ = '0.7.1a'
 __doc__ = '''
 PInjection (Python Injection)
 ----------------------------
@@ -53,16 +53,17 @@ from pathlib import Path
 import os
 import sys
 
-# Declare the necessary structures and variables.
 
 # * BEGIN .declarations
 
-# * Major declarations
+# * SECTION .WINDOWS_LIBRARIES
 KERNEL32 = ctypes.WinDLL('kernel32.dll')
 GetLastError = KERNEL32.GetLastError
+# * SECTION .WINDOWS_LIBRARIES
+
 WinError = ctypes.WinError
 
-# * Function declarations and types configuration
+# * SECTION .WIN32-FUNCTIONS
 OpenProcess = KERNEL32.OpenProcess
 OpenProcess.argtypes = [
     wintypes.DWORD, #dwDesiredAccess
@@ -115,8 +116,9 @@ WriteProcessMemory.argtypes = [
     ctypes.c_size_t, #lp*NumberOfBytesWritten
     ]
 WriteProcessMemory.restype = wintypes.BOOL
+# * SECTION .WIN32-FUNCTIONS
 
-# * Process Access Rights
+# * SECTION .WIN32-PROCESS_ACCESS_RIGHTS
 PROCESS_ALL_ACCESS = (0x000F0000 | 0x00100000 | 0xFFF)
 
 PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
@@ -126,9 +128,9 @@ PROCESS_TERMINATE = 0x0001
 PROCESS_VM_OPERATION = 0x0008
 PROCESS_VM_READ =  0x0010
 PROCESS_VM_WRITE = 0x0020
+# * SECTION .WIN32-PROCESS_ACCESS_RIGHTS
 
-# * Memory regions constants and variables
-#   * Page constants
+# * SECTION.WIN32-PAGE_CONSTANTS
 PAGE_EXECUTE = 0x10
 PAGE_EXECUTE_READ = 0x20
 PAGE_EXECUTE_READWRITE = 0x40
@@ -143,8 +145,10 @@ PAGE_TARGETS_NO_UPDATE = 0x40000000
 PAGE_GUARD = 0x100
 PAGE_NOCACHE = 0x200
 PAGE_WRITECOMBINE = 0x400
+# * SECTION.WIN32-PAGE_CONSTANTS
 
-#   * Memory constants
+
+# * SECTION .WIN32-MEMORY_CONSTANTS
 MEM_COMMIT = 0x00001000
 MEM_RESERVE = 0x00002000
 MEM_RESET = 0x00080000
@@ -156,7 +160,7 @@ MEM_TOP_DOWN = 0x00100000
 
 MEM_DECOMMIT = 0x00004000
 MEM_RELEASE = 0x00008000
-
+# * SECTION .WIN32-MEMORY_CONSTANTS
 
 # END .declarations
 
@@ -251,6 +255,8 @@ None.
         self.injected = False
         # * CodeType of the function
         self.obj = obj
+        # * co. properties
+        self.co = 0
         # * Marshaled version of the obj variable
         self.mobj = obj
         self.mobj_size = buffsize
@@ -283,8 +289,8 @@ None.
         '''Inject the obj to the given PID.'''
         # * Set the object if it is not already set.
         if not self.obj:
-            self.obj = self.setObj()
-            if self.obj == False:
+            self.setObj()
+            if not self.obj:
                 print("Unable to set the object")
                 return
         
@@ -297,8 +303,7 @@ None.
         if self.verbose:
             print(f"Content to inject\n\n{self.mobj}\n")
             print(f"Size of content: {self.mobj_size}")
-            print(f"Length of the buffer: {len(self.buff)}")
-            print('')
+            print(f"Length of the buffer: {len(self.buff)}\n")
         
         # * HANDLE of the process
         self.hProc =  OpenProcess(
@@ -328,9 +333,8 @@ None.
         if self.verbose:
             print("OK")
             print(f"Value returned from VirtualAllocEx {self.base_addr}")
-            print(f"Size of bytes allocated {self.mobj_size}")
-            print('')
-        
+            print(f"Size of bytes allocated {self.mobj_size}\n")
+
         if self.verbose:
             print(f"WriteProcessMemory base address: {self.base_addr}")
             print("WriteProcessMemory ... ", end = '')
@@ -361,46 +365,54 @@ None.
     def setObj(self):
         '''Set 'obj' with the proper Code Object.'''
         byte_code = dis.Bytecode(self.function)
-        co = byte_code.codeobj
+        self.co = byte_code.codeobj
         
         # * This tuple has the same order
         # * as CodeType parameters.
         
-        obj = (
-            co.co_argcount,
-            co.co_kwonlyargcount,
-            co.co_nlocals,
-            co.co_stacksize,
-            co.co_flags,
-            co.co_code,
-            co.co_consts,
-            co.co_names,
-            co.co_varnames,
+        self.obj = CodeType(
+            self.co.co_argcount,
+            self.co.co_kwonlyargcount,
+            self.co.co_nlocals,
+            self.co.co_stacksize,
+            self.co.co_flags,
+            self.co.co_code,
+            self.co.co_consts,
+            self.co.co_names,
+            self.co.co_varnames,
             self.filename,
-            co.co_name,
-            co.co_firstlineno,
-            co.co_lnotab
+            self.co.co_name,
+            self.co.co_firstlineno,
+            self.co.co_lnotab
             )
-        
         if self.verbose:
-            print(f'co.co_argcount {co.co_argcount}')
-            print(f'co.co_kwonlyargcount {co.co_kwonlyargcount}')
-            print(f'co.co_nlocals {co.co_nlocals}')
-            print(f'co.co_stacksize {co.co_stacksize}')
-            print(f'co.co_flags {co.co_flags}')
-            print(f'co.co_code {co.co_code}')
-            print(f'co.co_consts {co.co_consts}')
-            print(f'co.co_names {co.co_names}')
-            print(f'co.co_varnames {co.co_varnames}')
-            print(f'co.co_filename {self.filename}')
-            print(f'co.co_name {co.co_name}')
-            print(f'co.co_firstlineno {co.co_firstlineno}')
-            print(f'co.co_lnotab {co.co_lnotab}')
-            os.system('pause')
-            print('')
-        
-        return CodeType(*obj)
+            self.printObj()
+            
+        return True
     
+    def printObj(self, pause=False):
+        '''Print the disassembled functions properties.'''
+        if not self.obj:
+            print("There is no object to display")
+            return False
+        print(f'\nco.co_argcount {self.co.co_argcount}')
+        print(f'co.co_kwonlyargcount {self.co.co_kwonlyargcount}')
+        print(f'co.co_nlocals {self.co.co_nlocals}')
+        print(f'co.co_stacksize {self.co.co_stacksize}')
+        print(f'co.co_flags {self.co.co_flags}')
+        print(f'co.co_code {self.co.co_code}')
+        print(f'co.co_consts {self.co.co_consts}')
+        print(f'co.co_names {self.co.co_names}')
+        print(f'co.co_varnames {self.co.co_varnames}')
+        print(f'co.co_filename {self.filename}')
+        print(f'co.co_name {self.co.co_name}')
+        print(f'co.co_firstlineno {self.co.co_firstlineno}')
+        print(f'co.co_lnotab {self.co.co_lnotab}\n')
+        if pause:
+            os.system("pause")
+        return True
+        
+        
     def read(self):
         '''Read the memory region from a process.'''
         if self.buffsize == 0:
@@ -474,8 +486,7 @@ None.
         if not status:
             if self.verbose:
                 print("NOT OK")
-            print(WinError(GetLastError()))
-            print('')
+            print(f"{WinError(GetLastError())}\n")
             return False
             
         print("Content retrieved successfully")
@@ -489,8 +500,7 @@ None.
         status = self.read()
         if not status:
             print('Failed to retrieve memory to the buffer.')
-            print(f'Process PID - {self.pid}')
-            print('')
+            print(f'Process PID - {self.pid}\n')
             return False
             
         # * Check if content is valid marshal or not.
