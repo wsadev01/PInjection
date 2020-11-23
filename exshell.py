@@ -39,6 +39,8 @@ def shell(pid):
                 pass
             else:
                 pinject.execute()
+        elif cmd == "printobj":
+            pinject.printObj()
         elif cmd == "set baseaddr":
             try:
                 if pinject.base_addr == 0:
