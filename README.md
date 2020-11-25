@@ -1,6 +1,6 @@
-# <h1 align=center><img src=https://raw.githubusercontent.com/systemnaut/Pinjection/master/isologotipo/pinjector-iso-1-alpha.png width=50> PInjector</h1>
+# <h1 align=center><img src=https://raw.githubusercontent.com/systemnaut/Pinjection/master/isologotipo/pinjector-iso-1-alpha.png width=50> PInjection</h1>
 ![PInjector isologotype](isologotipo/pinjector-isologo-1.png)
-
+# [Readme-ES](README.md) - [Readme-EN](README-EN.md)
 ## ¿Qué es?
 PInjection es un script de Python que puede funcionar como Módulo o como script ejecutable desde la línea de comandos (CLI script). Este script lo que hace es inyectar Código Objeto en una región de memoria específica de un proceso utilizando la API de Windows ([OpenProcess](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess), [VirtuallAllocEx](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualallocex), [WriteProcessMemory](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-writeprocessmemory) y [ReadProcessMemory](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory)).
 
@@ -30,11 +30,10 @@ Ejecutando la función una vez inyectada (Se encuentra en la región de memoria 
 Comando: `python pinjection.py 5600 --constants constantsfile --baseaddr 14548992 --buffsize 164 --execute --verbose`
 ![Executing bytecode from explorer.exe memory](exampligratia/executing_testmodule.png)
 
-#### Notas 0.6.2
- - Agregado un ejemplo de utilización de este software como libreria (exshell.py), cualquiera con conocimientos básicos-intermedios en python podrá ser capaz de leer y comprender tranquilamente el código que hay allí dentro para luego replicarlo.
+#### Notas 0.7
+ - Primer release con archivo binario, este debería utilizarse como script CLI, y el archivo python como paquete o módulo.
+
+#### DISCLAIMER, AVISOS y AVISOS LEGALES.
  - Si no se desaloja la memoria en el proceso específico, se generará una [fuga de memoria](https://en.wikipedia.org/wiki/Memory_leak).
-
-
-#### DISCLAIMER Y AVISOS LEGALES.
  - Todos los contenidos multimedia estan licenciados bajo la licencia [Creative Commons BY-SA](https://creativecommons.org/licenses/by-sa/3.0/deed.es)
- - Todos mal uso que se le de a este software, queda estricta y absolutamente absuelto de *mea culpa* y/o responsabilidad sobre los daños y perjuicios generados a través del uso de este software, al utilizar este software estas accediendo a tomar cualquier tipo de responsabilidad sobre lo que el software pueda generar al ser utilizado.
+ - Este software fué diseñado con fínes educativos. El autor renuncia a toda responsabilidad por el uso que se haga del mismo
