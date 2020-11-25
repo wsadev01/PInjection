@@ -164,15 +164,6 @@ MEM_RELEASE = 0x00008000
 
 # END .declarations
 
-# Thanks to normanius (https://stackoverflow.com/users/3388962/normanius)
-# Stackoverflow answer https://stackoverflow.com/questions/404744/determining-application-path-in-a-python-exe-generated-by-pyinstaller
-if getattr(sys, 'frozen', False):
-    # If the application is run as a bundle, the PyInstaller bootloader
-    # extends the sys module by a flag frozen=True and sets the app 
-    # path into variable _MEIPASS'.
-    application_path = sys._MEIPASS
-else:
-    application_path = os.path.dirname(os.path.abspath(__file__))
 
 class Inject:
     '''
@@ -529,17 +520,24 @@ None.
             return False
         
         try:
+            if type(self.constants) != type({}):
+                print("Invalid constants, function won't be executed")
+                print("You must pass the constants with --constants\n")
+                return False
             if self.verbose:
-                print("Assignment of the crafted function ... ")
+                print("Assignment of the crafted function ... ", end="")
+            
             function = FunctionType(content, self.constants)
             if self.verbose:
                 # * THIS OK IS FROM THE UPPER VERBOSITY ROUTINE.
                 print("OK\n")
         except Exception as err:
+            print("NOT OK")
             print("An error occurred in the function assignment\n")
             if self.verbose:
                 print("Error message: ")
-                print(f"\t{str(err)}\n")
+                print(f"{str(err)}\n")
+                return False
                 
         if self.verbose and not function:
             print("NOT OK\n")
@@ -677,20 +675,21 @@ if __name__ == '__main__':
         help = 'Can\'t stop talking')
         
     args = parser.parse_args()
+    sys.path.append(os.getcwd())
     
     if args.function == None:
         func = ''
     else:
         module_function = args.function.split('___')
         module = module_function[0]
-        sys.path.append(os.getcwd())
+        
         module = importlib.import_module(module)
         func = module_function[1]
         func = getattr(module, func)
     if args.constants == None:
         constants = ''
     else:
-        constantFile = importlib.import_module(os.path.abspath(args.constants))
+        constantFile = importlib.import_module(args.constants)
         constants = constantFile.get_constants()
         if args.verbose:
             print(f"Constants\n{constants}\n")
