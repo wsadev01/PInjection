@@ -12,18 +12,18 @@ PInjection is a Python script that can be used as a Module or as an executable s
 
 ## What YES it is!
 
-  - PInjection **IS** an executable script for specific Object Code meter and "marshalized" in a specific memory region.
+  - PInjection **IS** an executable script to put specific marshalized `Code Object (CodeType)` or marshalized `Function Object (FunctionType)`within a specific memory region.
   - PInjection **IS** a module that provides an easy-to-use interface for any newbie to Python.
-  - PInjection **IS** una buena elección para ofuscar y ocultar código objeto en un proceso (Similar a DLL Injection).
-  - PInjection **IS** un software libre y gratuito. (GNU GPLv3).
+  - PInjection **IS** a good choice to hide `Code Object` within a process (Similar to DLL Injection).
+  - PInjection **IS** a "software libre" project. (GNU GPLv3).
 
 ## Limitations.
 
 As I said, this is not a script to execute and you will automatically destroy the target computer permanently,
-but a script / module to load object code in the memory of a process, this means explicitly what I say. To execute the object code that is saved,
+but a script/module to load object code in the memory of a process, this means explicitly what I said. To execute the object code that is saved,
 you have to know what it is, since then you will have to pass a FunctionType using the library types, and there you will have to define all the constants used
 in the object code. The loading of the object code is automatic, the execution **is NOT**. There are also many processes in which you will not be able to inject,
-since these processes have and / or present specific internal conditions that do not allow access to their memory regions
+since these processes have and/or present specific internal conditions that do not allow access to their memory regions
 
 ### Examples.
 ***
