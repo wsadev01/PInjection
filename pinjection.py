@@ -1,4 +1,4 @@
-##Copyright (C) 2020  Aitor Santoro
+##Copyright (C) 2020  Torswq
 ##
 ##    This program is free software: you can redistribute it and/or modify
 ##    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 ##    You should have received a copy of the GNU General Public License
 ##    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-__AUTHOR__ = 'torswq(systemnaut) <torsw@protonmail.com>'
+__AUTHOR__ = 'Aitor S. W. <torsw[AT]protonmail[DOT]com>'
 __LICENSE__ = 'GNU GPLv3'
 __VERSION__ = '0.7.1a'
 __doc__ = '''
